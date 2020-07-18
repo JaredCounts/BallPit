@@ -1,14 +1,18 @@
 import { Vector2 } from 'three'
 
+import * as THREE from 'three';
+import * as VIEW from './view';
+
 /**
  * For efficient collision finding.
  */
 export class Partition {
     private _idToBucket : Map<number, [number, number]>;
-    private _buckets : number[][][];
+    _buckets : number[][][];
 
-    private readonly _cellSize : number;
+    readonly _cellSize : number;
     private readonly _minRange : Vector2;
+
 
     /*
      * Min and max range tells us the minimum and maximum coordinates objects
@@ -37,29 +41,30 @@ export class Partition {
         for (let x = 0; x < xCount; x++) {
             this._buckets[x] = []
             for (let y = 0; y < yCount; y++) {
-                this._buckets[x][y] = []
+                this._buckets[x][y] = [];
             }
         }
+
     }
 
     /**
      * Update the given object in the internal model.
      */
-    Update(id: number, position: Vector2) : void
-    {
+    Update(id: number, position: Vector2) : void {
         const bucketIndices = this._PositionToBucketIndices(position);
         let addToBucket = false;
 
         if (this._idToBucket.has(id)) {
             const oldBucketIndices = this._idToBucket.get(id);
             if (oldBucketIndices != bucketIndices) {
+                // console.log(id);
                 // Remove from the old bucket
                 const oldBucket = 
                     this._buckets[oldBucketIndices[0]][oldBucketIndices[1]];
 
                 const index = oldBucket.indexOf(id);
                 oldBucket.splice(index, 1);
-            
+
                 // Since the object moved, set the flag to set add it to its new
                 // bucket.
                 addToBucket = true;

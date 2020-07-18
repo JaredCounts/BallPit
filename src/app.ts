@@ -6,7 +6,7 @@ import { BallSolver } from './ballSolver'
 import { MathUtils, Vector2 } from 'three'
 
 
-const radius = 0.03;
+const radius = 0.04;
 let ballSolver = new BallSolver(
     /* minRange */ new Vector2(-1, -1),
     /* maxRange */ new Vector2(1, 1),

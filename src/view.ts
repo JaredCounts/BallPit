@@ -14,6 +14,9 @@ export class View {
 
     private _ballMeshes: THREE.LineLoop[];
 
+    // private _bucketToMat : THREE.MeshBasicMaterial[][];
+
+
     constructor(parentElement: HTMLElement, ballSolver: BallSolver) {
         this._ballSolver = ballSolver;
 
@@ -46,15 +49,9 @@ export class View {
 
             const geometry = new THREE.CircleGeometry(radius, 16);
             geometry.vertices.shift();
-            
-            let material;
-            if (i == 0) {
-                material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-            }
-            else {
-                material = new THREE.LineBasicMaterial({ color: 0x0000ff });
-            }
 
+            const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+        
 
             // Since our scene view is flipped, we need to set this side to 
             // double, otherwise our circles will be invisible.
@@ -69,6 +66,33 @@ export class View {
 
             this._scene.add(circle);
         }
+
+
+        // this._bucketToMat = [];
+        
+        // for (let x = 0; x < this._ballSolver._partition._buckets.length; x++) {
+        //     this._bucketToMat[x] = [];
+        //     for (let y = 0; y < this._ballSolver._partition._buckets[x].length; y++) {
+                
+        //         let geometry = new THREE.PlaneGeometry(
+        //             this._ballSolver._partition._cellSize, 
+        //             this._ballSolver._partition._cellSize);
+        //         let material = new THREE.MeshBasicMaterial( {color: 0x000000, side: THREE.DoubleSide} );
+        //         let plane = new THREE.Mesh( geometry, material );
+        //         plane.position.set(
+        //             (x+0.5) * this._ballSolver._partition._cellSize - 1,
+        //             (y+0.5) * this._ballSolver._partition._cellSize - 1,
+        //             -1);
+        //         this._scene.add( plane );
+
+        //         this._bucketToMat[x][y] = material;
+        //         // console.log([x,y]);
+        //         // console.log(material;
+        //         // console.log(this._bucketToMat.get([x,y]));
+        //     }
+        // }
+
+
     }
 
     /**
@@ -91,5 +115,23 @@ export class View {
 
             this._ballMeshes[i].position.set(position.x, position.y, 0);
         }
+
+
+        // for (let x = 0; x < this._ballSolver._partition._buckets.length; x++) {
+        //     for (let y = 0; y < this._ballSolver._partition._buckets[x].length; y++) {
+        //         const bucket = this._ballSolver._partition._buckets[x][y];
+        //         const mat = this._bucketToMat[x][y];
+        //         // console.log(mat);
+
+        //         // console.log([x,y]);
+
+        //         if (bucket.length == 0) {
+        //             mat.color.setHex(0x880000);
+        //         }
+        //         else {
+        //             mat.color.setHex(0x008800);
+        //         }
+        //     }
+        // }
     }
 }

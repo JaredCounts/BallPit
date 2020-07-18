@@ -13,7 +13,7 @@ export class BallSolver {
     private _gravity : number;
 
     private _coeffOfRestitution : number;
-    private _partition : Partition;
+    _partition : Partition;
 
     constructor(minRange: Vector2, maxRange: Vector2, maxRadius: number) {
         this._positions = [];
@@ -182,7 +182,11 @@ export class BallSolver {
         let integratedVelocity = new Vector2();
         for (let index = 0; index < this.GetBallCount(); index++) {
             integratedVelocity.copy(this._velocities[index]).multiplyScalar(timestep);
-            this._positions[index].add(integratedVelocity);
+            
+            const position = this._positions[index];
+
+            position.add(integratedVelocity);
+            this._partition.Update(index, position);
         }
     }
 
