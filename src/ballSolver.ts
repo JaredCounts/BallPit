@@ -1,5 +1,5 @@
 import { Vector2 } from 'three'
-
+import { Partition } from './partition'
 
 export class BallSolver {
     private _positions : Vector2[];
@@ -13,8 +13,9 @@ export class BallSolver {
     private _gravity : number;
 
     private _coeffOfRestitution : number;
+    private _partition : Partition;
 
-    constructor(minRange: Vector2, maxRange: Vector2) {
+    constructor(minRange: Vector2, maxRange: Vector2, maxRadius: number) {
         this._positions = [];
         this._velocities = []; 
         this._masses = [];
@@ -25,6 +26,8 @@ export class BallSolver {
 
         this._gravity = 0.5;
         this._coeffOfRestitution = 0.85;
+
+        this._partition = new Partition(minRange, maxRange, maxRadius * 2);
     }
 
     AddBall(
@@ -34,10 +37,14 @@ export class BallSolver {
         radius: number,
         restitution: number) : void 
     {
+        const id = this._positions.length;
+
         this._positions.push(position);
         this._velocities.push(velocity);
         this._masses.push(mass);
         this._radii.push(radius);
+
+        this._partition.Update(id, position);
     }
 
     GetBallCount() : number {
@@ -130,6 +137,9 @@ export class BallSolver {
             // Fix wall collisions just in case.
             this._HandleWallCollisions(indexA);
             this._HandleWallCollisions(indexB);
+
+            this._partition.Update(indexA, positionA);
+            this._partition.Update(indexB, positionB);
 
             // Using their speeds along the collision normal, we just need
             // to solve the 1D collision case.
@@ -236,10 +246,20 @@ export class BallSolver {
     private *_Collisions() : Generator<[number, number]> {
         let collisionsFound = false;
         let iterations = 0;
-        while ((iterations == 0 || collisionsFound) && iterations < 10) {
+        while ((iterations == 0 || collisionsFound) && iterations < 6) {
+            collisionsFound = false;
             iterations++;
             for (let indexA = 0; indexA < this._positions.length; indexA++) {
-                for (let indexB = indexA+1; indexB < this._positions.length; indexB++) {
+                
+                const positionA = this._positions[indexA];
+
+                const nearby = this._partition.GetNearby(positionA);
+                for (let indexB of nearby) {
+                    // Don't collide a ball with itself.
+                    if (indexA == indexB) {
+                        continue;
+                    }
+
                     if (this._IsColliding(indexA, indexB)) {
                         collisionsFound = true;
                         yield [indexA, indexB];
