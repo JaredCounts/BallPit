@@ -1,4 +1,3 @@
-import { Ball } from './ball'
 import { Vector2 } from 'three'
 
 

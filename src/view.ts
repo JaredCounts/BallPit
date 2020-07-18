@@ -37,7 +37,7 @@ export class View {
         // The camera is orthographic, so things don't scale with distance. 
         // That means the z-coordinate we choose here doesn't matter, as long as
         // it's positive.
-        this._camera.position.z = 100;
+        this._camera.position.z = 1;
     }
 
     /**

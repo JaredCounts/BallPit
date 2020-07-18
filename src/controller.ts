@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { Vector2 } from 'three'
 import { TouchPos } from './touchPos'
 import { Bresenham } from './bresenham'
 
@@ -10,8 +10,8 @@ export class Controller {
     // can keep track of the "previous" positions of each touch.
     private readonly _identifierToTouchPos: Map<any, TouchPos>;
 
-    private _mousePos : THREE.Vector2;
-    private _prevMousePos : THREE.Vector2;
+    private _mousePos : Vector2;
+    private _prevMousePos : Vector2;
     private _mouseDown : boolean;
     
     private readonly _parentElement;
@@ -19,8 +19,8 @@ export class Controller {
     constructor(window, parentElement) {
         this._identifierToTouchPos = new Map<any, TouchPos>();
 
-        this._mousePos = new THREE.Vector2();
-        this._prevMousePos = new THREE.Vector2();
+        this._mousePos = new Vector2();
+        this._prevMousePos = new Vector2();
         this._mouseDown = false;
 
         this._parentElement = parentElement;
@@ -119,7 +119,7 @@ export class Controller {
         }
     }
 
-    private _UpdateMousePos(pos : THREE.Vector2) : void {
+    private _UpdateMousePos(pos : Vector2) : void {
         this._prevMousePos.copy(this._mousePos);
         this._mousePos = pos;
     }
@@ -127,12 +127,12 @@ export class Controller {
     /** 
      * Convert coordinates from page space to screen space.
      */
-    private _PageToScreen(pageX, pageY) : THREE.Vector2 {
+    private _PageToScreen(pageX, pageY) : Vector2 {
 
         const elementX = pageX - this._parentElement.offsetLeft;
         const elementY = pageY - this._parentElement.offsetTop;
 
-        return new THREE.Vector2(
+        return new Vector2(
             ((elementX / this._parentElement.offsetWidth) * 2 - 1) * 50,
             (-(elementY / this._parentElement.offsetHeight) * 2 + 1) * -50);
     }
