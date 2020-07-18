@@ -25,12 +25,14 @@ export class View {
         this._renderer.setSize(
             parentElement.offsetWidth, parentElement.offsetHeight);
 
+        const aspect = parentElement.offsetWidth / parentElement.offsetHeight;
+
         // The screen goes from [-1,1] along x and y axes.
         this._camera = new THREE.OrthographicCamera(
-            /* left */ -1,
-            /* right */ 1,
-            /* top */ -1,
-            /* bottom */ 1,
+            /* left */ -1.0,
+            /* right */ 1.0,
+            /* top */ -1.0/aspect,
+            /* bottom */ 1.0/aspect,
             /* near */ 0.1,
             /* far */ 7000);
 

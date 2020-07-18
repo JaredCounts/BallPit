@@ -6,47 +6,33 @@ import { BallSolver } from './ballSolver'
 import { MathUtils, Vector2 } from 'three'
 
 
-const radius = 0.04;
-let ballSolver = new BallSolver(
-    /* minRange */ new Vector2(-1, -1),
-    /* maxRange */ new Vector2(1, 1),
-    radius);
 
-for (let i = 0; i < 500; i++) {
-    ballSolver.AddBall(
-        new Vector2(MathUtils.randFloat(-1,1), MathUtils.randFloat(-1,1)),
-        new Vector2(MathUtils.randFloat(-0.3,0.3), MathUtils.randFloat(-0.3,0.3)),
-        /* mass */ 1,
-        /* radius */ radius,
-        /* restitution */ 0.8);
 
-}
+const radius = 0.03;
+let ballSolver : BallSolver; 
 
 // Defer setting up the view. We do this because we expect a dom element with 
 // the "app" ID, but it won't exist since js in the header gets loaded before
 // the dom elements.
 let view;
-function ResetView() : void {
-    const appElement = document.getElementById('app');
-
+function ResetView(element : HTMLElement) : void {
     // When updating the view, we need to be sure to replace the old dom element 
     // instead of just adding a new one.
     const oldDomElement = view == null ? null : view.GetDomElement();
-    view = new View(appElement, ballSolver);
+    view = new View(element, ballSolver);
 
     if (oldDomElement == null) {
-        appElement.appendChild(view.GetDomElement());
+        element.appendChild(view.GetDomElement());
     }
     else {
-        appElement.replaceChild(view.GetDomElement(), oldDomElement);
+        element.replaceChild(view.GetDomElement(), oldDomElement);
     }
 }
 
 // Defer setting up the controller for the same reason as the view.
 let controller;
-function ResetController() : void {
-    let appElement = document.getElementById('app');
-    controller = new Controller(window, appElement);
+function ResetController(element : HTMLElement) : void {
+    controller = new Controller(window, element);
 }
 
 const timestepManager = new TimeManager(
@@ -59,8 +45,10 @@ const timestepManager = new TimeManager(
 function Animate() : void {
     requestAnimationFrame(Animate);
 
-    timestepManager.Update(
-        ballSolver.Solve.bind(ballSolver));
+    if (ballSolver != null) {
+        timestepManager.Update(
+            ballSolver.Solve.bind(ballSolver));
+    }
 
     if (view != null) {
         view.Render();
@@ -69,15 +57,35 @@ function Animate() : void {
 
 // When the dom content loads, instantiate the view and controller
 function OnDOMContentLoaded(event) : void {
-    ResetView();
-    ResetController();
+    const appElement = document.getElementById('app');
+
+    const aspect = appElement.offsetWidth / appElement.offsetHeight;
+
+    ballSolver = new BallSolver(
+        /* minRange */ new Vector2(-1.0, -1.0/aspect),
+        /* maxRange */ new Vector2(1.0, 1.0/aspect),
+        radius);
+
+    for (let i = 0; i < 500; i++) {
+        ballSolver.AddBall(
+            new Vector2(MathUtils.randFloat(-aspect,aspect), MathUtils.randFloat(-aspect,aspect)),
+            new Vector2(MathUtils.randFloat(-0.3,0.3), MathUtils.randFloat(-0.3,0.3)),
+            /* mass */ 1,
+            /* radius */ radius,
+            /* restitution */ 0.8)
+    }
+
+    ResetView(appElement);
+    ResetController(appElement);
 }
 document.addEventListener('DOMContentLoaded', OnDOMContentLoaded);
 
 // When window resizes, reset everything.
 function OnWindowResize() {
-    ResetView();
-    ResetController();
+    const appElement = document.getElementById('app');
+
+    ResetView(appElement);
+    ResetController(appElement);
 }
 window.addEventListener('resize', OnWindowResize);
 

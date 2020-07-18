@@ -29,8 +29,8 @@ export class Partition {
         this._cellSize = maxDistance;
         this._minRange = minRange;
 
-        const xCount = (maxRange.x - minRange.x) / this._cellSize;
-        const yCount = (maxRange.y - minRange.y) / this._cellSize;
+        const xCount = Math.ceil((maxRange.x - minRange.x) / this._cellSize);
+        const yCount = Math.ceil((maxRange.y - minRange.y) / this._cellSize);
 
         console.log(xCount, yCount);
 
@@ -112,8 +112,8 @@ export class Partition {
 
     private _PositionToBucketIndices(position: Vector2) : [number, number] {
         return [
-            Math.floor((position.x - this._minRange.x) / this._cellSize),
-            Math.floor((position.y - this._minRange.y) / this._cellSize)];
+            THREE.MathUtils.clamp(Math.floor((position.x - this._minRange.x) / this._cellSize), 0, this._buckets.length - 1),
+            THREE.MathUtils.clamp(Math.floor((position.y - this._minRange.y) / this._cellSize), 0, this._buckets[0].length - 1)];
     }
 
 }
