@@ -12,7 +12,7 @@ export class View {
 
     private readonly _ballSolver : BallSolver;
 
-    private _ballMeshes: THREE.Mesh[];
+    private _ballMeshes: THREE.LineLoop[];
 
     constructor(parentElement: HTMLElement, ballSolver: BallSolver) {
         this._ballSolver = ballSolver;
@@ -45,12 +45,14 @@ export class View {
             const position = ballSolver.GetBallPosition(i);
 
             const geometry = new THREE.CircleGeometry(radius, 16);
+            geometry.vertices.shift();
+            
             let material;
             if (i == 0) {
-                material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+                material = new THREE.LineBasicMaterial({ color: 0xff0000 });
             }
             else {
-                material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+                material = new THREE.LineBasicMaterial({ color: 0x0000ff });
             }
 
 
@@ -58,7 +60,7 @@ export class View {
             // double, otherwise our circles will be invisible.
             material.side = THREE.DoubleSide;
 
-            const circle = new THREE.Mesh(geometry, material);
+            const circle = new THREE.LineLoop(geometry, material);
             this._ballMeshes.push(circle);
 
             // circle.position.set(0.5,0,0);

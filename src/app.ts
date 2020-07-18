@@ -9,12 +9,12 @@ let ballSolver = new BallSolver(
     /* minRange */ new Vector2(-1, -1),
     /* maxRange */ new Vector2(1, 1));
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 500; i++) {
     ballSolver.AddBall(
         new Vector2(MathUtils.randFloat(-1,1), MathUtils.randFloat(-1,1)),
         new Vector2(MathUtils.randFloat(-0.3,0.3), MathUtils.randFloat(-0.3,0.3)),
         /* mass */ 1,
-        /* radius */ 0.05,
+        /* radius */ 0.02,
         /* restitution */ 0.8);
 
 }

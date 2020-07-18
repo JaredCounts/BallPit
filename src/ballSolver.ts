@@ -23,7 +23,7 @@ export class BallSolver {
         this._minRange = minRange;
         this._maxRange = maxRange;
 
-        this._gravity = 0.1;
+        this._gravity = 0.5;
         this._coeffOfRestitution = 0.85;
     }
 
@@ -183,24 +183,28 @@ export class BallSolver {
             if (velocity.x > 0) {
                 velocity.x *= -this._coeffOfRestitution;
             }
+            position.x = this._maxRange.x - radius;
         }
 
         if (position.x < this._minRange.x + radius) {
             if (velocity.x < 0) {
                 velocity.x *= -this._coeffOfRestitution;
             }
+            position.x = this._minRange.x + radius;
         }
 
         if (position.y > this._maxRange.y - radius) {
             if (velocity.y > 0) {
                 velocity.y *= -this._coeffOfRestitution;
             }
+            position.y = this._maxRange.y - radius;
         }
 
         if (position.y < this._minRange.y + radius) {
             if (velocity.y < 0) {
                 velocity.y *= -this._coeffOfRestitution;
             }
+            position.y = this._minRange.y + radius
         }
     }
 
@@ -209,7 +213,7 @@ export class BallSolver {
             this._positions[index], 
             this._velocities[index], 
             this._masses[index], 
-            this._radii[index];
+            this._radii[index]];
     }
 
     private _GetBallPosAndRadius(index: number) : [Vector2, number] {
