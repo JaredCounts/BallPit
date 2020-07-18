@@ -1,0 +1,32 @@
+{
+  "name": "Circus",
+  "version": "1.0.0",
+  "description": "three.js + typescript",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --inline --open --save-dev",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [],
+  "author": "Jared Counts",
+  "license": "MIT",
+  "devDependencies": {
+    "awesome-typescript-loader": "latest",
+    "css-loader": "latest",
+    "html-webpack-plugin": "latest",
+    "progress-bar-webpack-plugin": "latest",
+    "style-loader": "latest",
+    "typescript": "latest",
+    "webpack": "latest",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "latest"
+  },
+  "dependencies": {
+    "three": "latest"
+  }
+}
