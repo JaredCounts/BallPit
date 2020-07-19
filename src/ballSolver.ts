@@ -13,7 +13,7 @@ export class BallSolver {
     private _gravity : number;
 
     private _coeffOfRestitution : number;
-    _partition : Partition;
+    private _partition : Partition;
 
     constructor(minRange: Vector2, maxRange: Vector2, maxRadius: number) {
         this._positions = [];
@@ -57,6 +57,10 @@ export class BallSolver {
 
     GetBallRadius(index: number) : number {
         return this._radii[index];
+    }
+
+    AddVelocityToBall(index: number, velocity: Vector2) : void {
+        this._velocities[index].add(velocity);
     }
 
     /**

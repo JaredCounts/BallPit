@@ -8,11 +8,10 @@ import * as VIEW from './view';
  */
 export class Partition {
     private _idToBucket : Map<number, [number, number]>;
-    _buckets : number[][][];
+    private _buckets : number[][][];
 
     readonly _cellSize : number;
     private readonly _minRange : Vector2;
-
 
     /*
      * Min and max range tells us the minimum and maximum coordinates objects

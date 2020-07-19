@@ -5,10 +5,9 @@ import { BallSolver } from './ballSolver'
 
 import { MathUtils, Vector2 } from 'three'
 
+let radius : number;
+const ballCount = 500;
 
-
-
-const radius = 0.03;
 let ballSolver : BallSolver; 
 
 // Defer setting up the view. We do this because we expect a dom element with 
@@ -32,7 +31,7 @@ function ResetView(element : HTMLElement) : void {
 // Defer setting up the controller for the same reason as the view.
 let controller;
 function ResetController(element : HTMLElement) : void {
-    controller = new Controller(window, element);
+    controller = new Controller(window, element, ballSolver);
 }
 
 const timestepManager = new TimeManager(
@@ -61,12 +60,23 @@ function OnDOMContentLoaded(event) : void {
 
     const aspect = appElement.offsetWidth / appElement.offsetHeight;
 
+    const width = 2;
+    const height = 2.0/aspect;
+
+    // This is roughly how much of the screen we want to be occupied by balls.
+    const ballAmountFactor = 0.4;
+
+    radius = 
+        Math.sqrt(ballAmountFactor * width * height / (ballCount * Math.PI));
+
+    console.log(radius);
+
     ballSolver = new BallSolver(
         /* minRange */ new Vector2(-1.0, -1.0/aspect),
         /* maxRange */ new Vector2(1.0, 1.0/aspect),
         radius);
 
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < ballCount; i++) {
         ballSolver.AddBall(
             new Vector2(MathUtils.randFloat(-aspect,aspect), MathUtils.randFloat(-aspect,aspect)),
             new Vector2(MathUtils.randFloat(-0.3,0.3), MathUtils.randFloat(-0.3,0.3)),

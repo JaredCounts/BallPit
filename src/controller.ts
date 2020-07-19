@@ -1,6 +1,8 @@
 import { Vector2 } from 'three'
 import { TouchPos } from './touchPos'
-import { Bresenham } from './bresenham'
+import { BallSolver } from './ballSolver'
+
+import { MathUtils } from 'three';
 
 /**
  * Handle user interactions.
@@ -14,9 +16,11 @@ export class Controller {
     private _prevMousePos : Vector2;
     private _mouseDown : boolean;
     
-    private readonly _parentElement;
+    private readonly _parentElement : HTMLElement;
 
-    constructor(window, parentElement) {
+    private readonly _ballSolver : BallSolver;
+
+    constructor(window, parentElement, ballSolver) {
         this._identifierToTouchPos = new Map<any, TouchPos>();
 
         this._mousePos = new Vector2();
@@ -24,6 +28,8 @@ export class Controller {
         this._mouseDown = false;
 
         this._parentElement = parentElement;
+
+        this._ballSolver = ballSolver;
 
         this._RegisterForEvents()
     }
@@ -91,18 +97,79 @@ export class Controller {
 
     HandleMouseMove(event) : void {
         this._UpdateMousePos(this._PageToScreen(event.pageX, event.pageY));
+
+        if (this._mouseDown) {
+            this._Drag(this._prevMousePos, this._mousePos);
+        }
     }
 
     HandleMouseClick(event) : void {
         this._UpdateMousePos(this._PageToScreen(event.pageX, event.pageY));
     }
 
+    private _DistanceToSegment(
+        segmentStart : Vector2,
+        segmentEnd : Vector2,
+        position : Vector2) : number 
+    {
+        const startToEnd = new Vector2();
+        startToEnd.subVectors(segmentEnd, segmentStart);
+
+        const posRelativeToStart = new Vector2();
+        posRelativeToStart.subVectors(position, segmentStart);
+
+        const projectedDistAlongStartToEnd = posRelativeToStart.dot(startToEnd);
+
+        // If the dot product < 0, then the position is past the segment start
+        if (projectedDistAlongStartToEnd < 0) {
+            return position.distanceTo(segmentStart);
+        }
+        // On the other hand, if it's longer than the vector from start to end
+        // of the segment, then it's past the end.
+        else if (
+            projectedDistAlongStartToEnd * projectedDistAlongStartToEnd 
+            > startToEnd.lengthSq())
+        {
+            return position.distanceTo(segmentEnd);
+        }
+        // Otherwise, we want the distance to the line.
+        else {
+            // segmentStart + (posRelativeToStart dot startToEnd) * startToEnd
+            const projectedToLine = new Vector2();
+            projectedToLine
+                .copy(startToEnd)
+                .multiplyScalar(projectedDistAlongStartToEnd)
+                .add(segmentStart);
+
+            return projectedToLine.distanceTo(position);
+        }
+    }
+
+    private _Drag(fromPosition : Vector2, toPosition : Vector2) : void {
+        const force = 10;
+
+
+        const velToAdd = new Vector2();
+        velToAdd.subVectors(toPosition, fromPosition);
+        velToAdd.multiplyScalar(force);
+
+        for (let i = 0; i < this._ballSolver.GetBallCount(); i++) {
+            let ballPosition = this._ballSolver.GetBallPosition(i);
+
+            if (this._DistanceToSegment(fromPosition, toPosition, ballPosition) < 0.2) {
+                this._ballSolver.AddVelocityToBall(i, velToAdd);
+            }
+        }
+    } 
+
     /**
      * This adds the controller's handlers to their respective events in the
      * parent element.
      */
     private _RegisterForEvents() : void {
-        const bindings = [
+        type Binding = [string, EventListenerOrEventListenerObject]
+        let bindings : Binding[];
+        bindings = [
             ['touchmove', this.HandleTouchMove.bind(this)],
             ['touchstart', this.HandleTouchStart.bind(this)],
             ['touchend', this.HandleTouchEnd.bind(this)],
@@ -128,12 +195,20 @@ export class Controller {
      * Convert coordinates from page space to screen space.
      */
     private _PageToScreen(pageX, pageY) : Vector2 {
-
         const elementX = pageX - this._parentElement.offsetLeft;
         const elementY = pageY - this._parentElement.offsetTop;
 
+        const aspect = 
+            this._parentElement.offsetWidth / this._parentElement.offsetHeight;
+
         return new Vector2(
-            ((elementX / this._parentElement.offsetWidth) * 2 - 1) * 50,
-            (-(elementY / this._parentElement.offsetHeight) * 2 + 1) * -50);
+            MathUtils.mapLinear(
+                elementX, 
+                0, this._parentElement.offsetWidth,
+                -1, 1),
+            MathUtils.mapLinear(
+                elementY, 
+                0, this._parentElement.offsetHeight,
+                -1.0/aspect, 1.0/aspect));
     }
 }
