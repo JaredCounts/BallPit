@@ -1,4 +1,4 @@
-# Circus Fluid
+# Ball Pit
 
 Implemented in Typescript + Three.js. See my portfolio page for a demo of this project: http://jaredcounts.com/circus/
 
