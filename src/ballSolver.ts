@@ -24,8 +24,8 @@ export class BallSolver {
         this._minRange = minRange;
         this._maxRange = maxRange;
 
-        this._gravity = 0.5;
-        this._coeffOfRestitution = 0.85;
+        this._gravity = 4.0;
+        this._coeffOfRestitution = 0.9;
 
         this._partition = new Partition(minRange, maxRange, maxRadius * 2);
     }
