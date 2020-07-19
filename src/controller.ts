@@ -153,7 +153,7 @@ export class Controller {
     }
 
     private _Drag(fromPosition : Vector2, toPosition : Vector2) : void {
-        const force = 25;
+        const force = 15;
 
 
         const velToAdd = new Vector2();

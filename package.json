@@ -1,5 +1,5 @@
 {
-  "name": "Ball Pit",
+  "name": "BallPit",
   "version": "1.0.0",
   "description": "three.js + typescript",
   "main": "app.js",
