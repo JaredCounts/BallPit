@@ -5,15 +5,17 @@ import { BallSolver } from './ballSolver'
 
 import { MathUtils, Vector2 } from 'three'
 
-let radius : number;
-
 // The radius of the ball will be chosen based on this factor. This represents
-// roughly how much of the screen we want to be occupied by balls.
-const ballRadiusFactor = 0.4;
-const ballCount = 500;
+// roughly how much of the screen we want to be occupied by balls, if the balls
+// all had the max radius.
+const ballRadiusFactor = 0.7;
+
+const ballCount = 300;
 
 const gravity = 3.0;
 const coefficientOfRestitution = 0.9;
+
+let maxRadius : number;
 
 let ballSolver : BallSolver; 
 function ResetBallSolver(element : HTMLElement) : void {
@@ -23,27 +25,27 @@ function ResetBallSolver(element : HTMLElement) : void {
     const width = 2;
     const height = 2.0/aspect;
 
-    radius = 
+    maxRadius = 
         Math.sqrt(ballRadiusFactor * width * height / (ballCount * Math.PI));
 
     ballSolver = new BallSolver(
         /* minRange */ new Vector2(-1.0, -1.0/aspect),
         /* maxRange */ new Vector2(1.0, 1.0/aspect),
-        radius,
+        maxRadius,
         gravity,
         coefficientOfRestitution);
 
     for (let i = 0; i < ballCount; i++) {
+        const ballRadius = MathUtils.randFloat(0.5*maxRadius, maxRadius);
         ballSolver.AddBall(
             /* position */ new Vector2(
-                MathUtils.randFloat(-aspect,aspect), 
-                MathUtils.randFloat(-aspect,aspect)),
+                MathUtils.randFloat(-1.0, 1.0), 
+                MathUtils.randFloat(-1.0/aspect, 1.0/aspect)),
             /* velocity */ new Vector2(
                 MathUtils.randFloat(-0.3,0.3), 
                 MathUtils.randFloat(-0.3,0.3)),
-            /* mass */ 1,
-            /* radius */ radius,
-            /* restitution */ 0.8)
+            /* mass */ Math.PI * ballRadius * ballRadius,
+            /* radius */ ballRadius);
     }
 }
 

@@ -1,10 +1,9 @@
-import { Vector2 } from 'three'
-
-import * as THREE from 'three';
-import * as VIEW from './view';
+import { MathUtils, Vector2 } from 'three'
 
 /**
- * For efficient collision finding.
+ * This class partitions the world space into a uniformly sized grid, which is
+ * used to sort generic IDs into buckets for the client.
+ * This allows efficient retrieval of nearby objects for a given location.
  */
 export class Partition {
     private _idToBucket : Map<number, [number, number]>;
@@ -30,8 +29,6 @@ export class Partition {
 
         const xCount = Math.ceil((maxRange.x - minRange.x) / this._cellSize);
         const yCount = Math.ceil((maxRange.y - minRange.y) / this._cellSize);
-
-        console.log(xCount, yCount);
 
         this._idToBucket = new Map<number, [number, number]>();
 
@@ -111,8 +108,14 @@ export class Partition {
 
     private _PositionToBucketIndices(position: Vector2) : [number, number] {
         return [
-            THREE.MathUtils.clamp(Math.floor((position.x - this._minRange.x) / this._cellSize), 0, this._buckets.length - 1),
-            THREE.MathUtils.clamp(Math.floor((position.y - this._minRange.y) / this._cellSize), 0, this._buckets[0].length - 1)];
+            MathUtils.clamp(
+                Math.floor((position.x - this._minRange.x) / this._cellSize), 
+                0, 
+                this._buckets.length - 1),
+            MathUtils.clamp(
+                Math.floor((position.y - this._minRange.y) / this._cellSize), 
+                0, 
+                this._buckets[0].length - 1)];
     }
 
 }

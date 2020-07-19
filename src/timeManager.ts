@@ -25,9 +25,9 @@ export class TimeManager {
      * function with fixed sized timesteps to catch up with the current time.
      */
     Update(callback : timestepFunction) {
-        let time = Date.now();
+        const time = Date.now();
         
-        let elapsed_ms = time - this._lastUpdateTime;
+        const elapsed_ms = time - this._lastUpdateTime;
 
         // The timestepCount is the number of times we can fit a single timestep
         // in the total elapsed time plus any "leftover" fractional time from 
