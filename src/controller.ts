@@ -55,6 +55,13 @@ export class Controller {
                     new TouchPos(screenPosition.x, screenPosition.y));
             }
         }
+
+        // Handle drag interactions.
+        for (const TouchPos of this._identifierToTouchPos.values()) {
+            this._Drag(
+                new Vector2(TouchPos.GetPrevPosX(), TouchPos.GetPrevPosY()),
+                new Vector2(TouchPos.GetPosX(), TouchPos.GetPosY()));
+        }
     }
 
     HandleTouchEnd(event) : void {

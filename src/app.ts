@@ -12,7 +12,6 @@ let radius : number;
 const ballRadiusFactor = 0.4;
 const ballCount = 500;
 
-
 let ballSolver : BallSolver; 
 function ResetBallSolver(element : HTMLElement) : void {
     const aspect = element.offsetWidth / element.offsetHeight;
