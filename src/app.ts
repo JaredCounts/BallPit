@@ -6,9 +6,42 @@ import { BallSolver } from './ballSolver'
 import { MathUtils, Vector2 } from 'three'
 
 let radius : number;
+
+// The radius of the ball will be chosen based on this factor. This represents
+// roughly how much of the screen we want to be occupied by balls.
+const ballRadiusFactor = 0.4;
 const ballCount = 500;
 
+
 let ballSolver : BallSolver; 
+function ResetBallSolver(element : HTMLElement) : void {
+    const aspect = element.offsetWidth / element.offsetHeight;
+
+    // World-space width and height
+    const width = 2;
+    const height = 2.0/aspect;
+
+    radius = 
+        Math.sqrt(ballRadiusFactor * width * height / (ballCount * Math.PI));
+
+    ballSolver = new BallSolver(
+        /* minRange */ new Vector2(-1.0, -1.0/aspect),
+        /* maxRange */ new Vector2(1.0, 1.0/aspect),
+        radius);
+
+    for (let i = 0; i < ballCount; i++) {
+        ballSolver.AddBall(
+            /* position */ new Vector2(
+                MathUtils.randFloat(-aspect,aspect), 
+                MathUtils.randFloat(-aspect,aspect)),
+            /* velocity */ new Vector2(
+                MathUtils.randFloat(-0.3,0.3), 
+                MathUtils.randFloat(-0.3,0.3)),
+            /* mass */ 1,
+            /* radius */ radius,
+            /* restitution */ 0.8)
+    }
+}
 
 // Defer setting up the view. We do this because we expect a dom element with 
 // the "app" ID, but it won't exist since js in the header gets loaded before
@@ -58,33 +91,7 @@ function Animate() : void {
 function OnDOMContentLoaded(event) : void {
     const appElement = document.getElementById('app');
 
-    const aspect = appElement.offsetWidth / appElement.offsetHeight;
-
-    const width = 2;
-    const height = 2.0/aspect;
-
-    // This is roughly how much of the screen we want to be occupied by balls.
-    const ballAmountFactor = 0.4;
-
-    radius = 
-        Math.sqrt(ballAmountFactor * width * height / (ballCount * Math.PI));
-
-    console.log(radius);
-
-    ballSolver = new BallSolver(
-        /* minRange */ new Vector2(-1.0, -1.0/aspect),
-        /* maxRange */ new Vector2(1.0, 1.0/aspect),
-        radius);
-
-    for (let i = 0; i < ballCount; i++) {
-        ballSolver.AddBall(
-            new Vector2(MathUtils.randFloat(-aspect,aspect), MathUtils.randFloat(-aspect,aspect)),
-            new Vector2(MathUtils.randFloat(-0.3,0.3), MathUtils.randFloat(-0.3,0.3)),
-            /* mass */ 1,
-            /* radius */ radius,
-            /* restitution */ 0.8)
-    }
-
+    ResetBallSolver(appElement);
     ResetView(appElement);
     ResetController(appElement);
 }
@@ -94,6 +101,7 @@ document.addEventListener('DOMContentLoaded', OnDOMContentLoaded);
 function OnWindowResize() {
     const appElement = document.getElementById('app');
 
+    ResetBallSolver(appElement);
     ResetView(appElement);
     ResetController(appElement);
 }
