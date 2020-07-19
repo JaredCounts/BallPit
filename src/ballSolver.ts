@@ -15,7 +15,13 @@ export class BallSolver {
     private _coeffOfRestitution : number;
     private _partition : Partition;
 
-    constructor(minRange: Vector2, maxRange: Vector2, maxRadius: number) {
+    constructor(
+        minRange: Vector2,
+        maxRange: Vector2,
+        maxRadius: number,
+        gravity: number,
+        coefficientOfRestitution: number) 
+    {
         this._positions = [];
         this._velocities = []; 
         this._masses = [];
@@ -24,8 +30,8 @@ export class BallSolver {
         this._minRange = minRange;
         this._maxRange = maxRange;
 
-        this._gravity = 3.0;
-        this._coeffOfRestitution = 0.9;
+        this._gravity = gravity;
+        this._coeffOfRestitution = coefficientOfRestitution;
 
         this._partition = new Partition(minRange, maxRange, maxRadius * 2);
     }

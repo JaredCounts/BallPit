@@ -12,6 +12,9 @@ let radius : number;
 const ballRadiusFactor = 0.4;
 const ballCount = 500;
 
+const gravity = 3.0;
+const coefficientOfRestitution = 0.9;
+
 let ballSolver : BallSolver; 
 function ResetBallSolver(element : HTMLElement) : void {
     const aspect = element.offsetWidth / element.offsetHeight;
@@ -26,7 +29,9 @@ function ResetBallSolver(element : HTMLElement) : void {
     ballSolver = new BallSolver(
         /* minRange */ new Vector2(-1.0, -1.0/aspect),
         /* maxRange */ new Vector2(1.0, 1.0/aspect),
-        radius);
+        radius,
+        gravity,
+        coefficientOfRestitution);
 
     for (let i = 0; i < ballCount; i++) {
         ballSolver.AddBall(
